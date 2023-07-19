@@ -1,0 +1,29 @@
+{
+  "name": "to-do-list",
+  "version": "1.0.0",
+  "packageManager": "yarn@3.6.1",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "client": "yarn workspace @to-do-list/client",
+    "depcheck": "depcheck && yarn workspaces foreach run depcheck",
+    "eslint": "yarn workspaces foreach run eslint",
+    "lint": "syncpack format && syncpack list-mismatches && yarn depcheck && yarn prettier && yarn eslint",
+    "postinstall": "is-ci || husky install",
+    "prettier": "prettier --write '**/{src,test}/**/*.{js,ts,jsx,tsx}'",
+    "server": "yarn workspace @to-do-list/server"
+  },
+  "dependencies": {
+    "is-ci": "^3.0.1"
+  },
+  "devDependencies": {
+    "depcheck": "^1.4.3",
+    "husky": "^8.0.0",
+    "prettier": "^3.0.0",
+    "syncpack": "^10.7.3",
+    "typescript": "5.1.6"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "dependencyTypes": [
+    "dev",
+    "peer",
+    "prod"
+  ],
+  "filter": ".",
+  "indent": "  ",
+  "semverRange": "",
+  "sortAz": [
+    "contributors",
+    "dependencies",
+    "devDependencies",
+    "keywords",
+    "peerDependencies",
+    "publishConfig",
+    "scripts"
+  ],
+  "sortFirst": [
+    "name",
+    "version",
+    "repository",
+    "license",
+    "packageManager",
+    "private",
+    "main",
+    "typedocMain",
+    "publishConfig",
+    "workspaces",
+    "scripts",
+    "dependencies",
+    "devDependencies"
+  ],
+  "source": [
+    "package.json",
+    "server/package.json",
+    "client/package.json"
+  ],
+  "versionGroups": []
+}
