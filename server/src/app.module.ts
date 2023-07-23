@@ -9,12 +9,24 @@ import { ConfigModule } from '@nestjs/config';
 import { TasksModule } from './tasks/tasks.module';
 import { Task } from './tasks/entities/task.entity';
 import { AuthModule } from './auth/auth.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useFactory: async () => ({
+        store: await redisStore({
+          url: `redis://${config.REDIS_HOST}:${config.REDIS_PORT}`,
+          password: config.REDIS_PASSWORD,
+          ttl: config.REDIS_CACHE_TTL,
+        }),
+      }),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -26,8 +38,8 @@ import { AuthModule } from './auth/auth.module';
       entities: [User, Task],
       synchronize: true,
       cache: {
-        alwaysEnabled: true,
-        type: 'ioredis',
+        alwaysEnabled: false,
+        type: 'redis',
         duration: config.REDIS_CACHE_TTL,
         options: {
           host: config.REDIS_HOST,

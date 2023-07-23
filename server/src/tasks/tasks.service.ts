@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
@@ -7,26 +7,34 @@ import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { FindAllTaskDto } from './dto/findall-task.dto';
 import _ from 'lodash';
+import { ConfigService } from '@nestjs/config';
+import { ConfigType } from '../config/configuration';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { handleError } from '../utils/error';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectRepository(Task)
-    private taskRepository: Repository<Task>
+    private taskRepository: Repository<Task>,
+    private configService: ConfigService<ConfigType>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
   async create(userId: string, createTaskDto: CreateTaskDto) {
     if (_.isEmpty(userId)) {
       throw new BadRequestException('userId is required');
     }
+
     try {
       const task = this.taskRepository.create(createTaskDto);
       task.user = new User({ id: userId });
+
       await this.taskRepository.save(task);
       return task;
     } catch (error: any) {
-      const message = error.detail ?? error.toString();
-      throw new BadRequestException(message);
+      return handleError(error);
     }
   }
 
@@ -52,25 +60,42 @@ export class TasksService {
     if (prevEndId) {
       query.andWhere('id < :prevEndId', { prevEndId });
     }
-
     query.orderBy('id', 'DESC').take(take);
 
-    const [tasks, total] = await query.getManyAndCount();
+    query.cache(
+      `tasks:${userId}:findAll:${prevEndId ?? 'START'}:${take}:${content ?? 'ALL'}:${isCompleted ?? 'ALL'}`,
+      this.getRedisCacheTtl()
+    );
 
-    let currEndId: string;
-    if (tasks.length > 0) {
-      currEndId = tasks[tasks.length - 1].id;
-    } else {
-      currEndId = 'END';
+    try {
+      const [tasks, total] = await query.getManyAndCount();
+
+      let currEndId: string;
+      if (tasks.length > 0) {
+        currEndId = tasks[tasks.length - 1].id;
+      } else {
+        currEndId = 'END';
+      }
+
+      return { tasks, total, currEndId };
+    } catch (error: any) {
+      return handleError(error);
     }
-
-    console.log('111', { tasks, total, currEndId });
-    return { tasks, total, currEndId };
   }
 
   async findOne(userId: string, id: string) {
+    if (_.isEmpty(userId)) {
+      throw new BadRequestException('userId is required');
+    }
+
     try {
-      const task = await this.taskRepository.findOneByOrFail({ id });
+      const task = await this.taskRepository.findOneOrFail({
+        where: { id },
+        cache: {
+          id: `tasks:${userId}:findOne:${id}`,
+          milliseconds: this.getRedisCacheTtl(),
+        },
+      });
       if (task.userId !== userId) {
         throw new ForbiddenException();
       }
@@ -79,29 +104,37 @@ export class TasksService {
       if (error.name === 'EntityNotFoundError') {
         throw new NotFoundException();
       }
-      const message = error.detail ?? error.toString();
-      throw new BadRequestException(message);
+      return handleError(error);
     }
   }
 
   async update(userId: string, id: string, updateTaskDto: UpdateTaskDto) {
+    if (_.isEmpty(userId)) {
+      throw new BadRequestException('userId is required');
+    }
+
     try {
       const taskToUpdate = await this.taskRepository.findOneByOrFail({ id });
       if (taskToUpdate.userId !== userId) {
         throw new ForbiddenException();
       }
-      const updatedTask = this.taskRepository.merge(taskToUpdate, updateTaskDto);
-      return this.taskRepository.save(updatedTask);
+      await this.deleteRedisCache(userId);
+
+      await this.taskRepository.update({ id }, updateTaskDto);
+      return this.taskRepository.merge(taskToUpdate, updateTaskDto);
     } catch (error: any) {
       if (error.name === 'EntityNotFoundError') {
         throw new NotFoundException();
       }
-      const message = error.detail ?? error.toString();
-      throw new BadRequestException(message);
+      return handleError(error);
     }
   }
 
   async remove(userId: string, id: string) {
+    if (_.isEmpty(userId)) {
+      throw new BadRequestException('userId is required');
+    }
+
     try {
       const taskToDelete = await this.taskRepository.findOneBy({ id });
       if (!taskToDelete) {
@@ -110,11 +143,24 @@ export class TasksService {
       if (taskToDelete.userId !== userId) {
         throw new ForbiddenException();
       }
+      await this.deleteRedisCache(userId);
+
       const deleteResult = await this.taskRepository.softDelete({ id });
-      return deleteResult.affected || 0; // Return the number of records deleted successfully
+      return deleteResult.affected ?? 0; // Return the number of records deleted successfully
     } catch (error: any) {
-      const message = error.detail ?? error.toString();
-      throw new BadRequestException(message);
+      return handleError(error);
     }
+  }
+
+  private getRedisCacheTtl(): number {
+    const ttl = this.configService.get('REDIS_CACHE_TTL', { infer: true });
+    return ttl ?? 60_000;
+  }
+
+  private async deleteRedisCache(userId: string) {
+    // Get all keys that start with `tasks:${userId}:*`
+    const keys = await this.cacheManager.store.keys(`tasks:${userId}:*`);
+    console.log('deleteRedisCache', userId, keys.length);
+    await Promise.all(keys.map(key => this.cacheManager.del(key)));
   }
 }

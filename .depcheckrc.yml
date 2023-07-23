@@ -1,2 +1,16 @@
-ignores: ["typescript"]
-ignore-patterns: ["dist", "docs", "libs"]
+ignores:
+  [
+    'typescript',
+    '@testing-library/user-event',
+    '@types/jest',
+    '@nestjs/mapped-types',
+    'pg',
+    'redis',
+    '@nestjs/schematics',
+    '@types/body-parser',
+    '@types/jest',
+    'source-map-support',
+    'ts-loader',
+    'tsconfig-paths',
+  ]
+ignore-patterns: ['dist', 'docs', 'libs']
