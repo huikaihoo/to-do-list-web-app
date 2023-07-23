@@ -1,32 +1,39 @@
 import { User } from 'src/users/entities/user.entity';
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Task {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  id!: number;
 
   @CreateDateColumn({ type: 'timestamp', nullable: true })
-  createdAt: Date;
+  createdAt!: Date;
 
-  @CreateDateColumn({ type: 'timestamp', nullable: true })
-  updatedAt: Date;
+  @UpdateDateColumn({ type: 'timestamp', nullable: true })
+  updatedAt!: Date;
+
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  deletedAt?: Date;
 
   @ManyToOne(() => User)
-  user: User;
+  @JoinColumn({ name: 'userId' })
+  user!: User;
+
+  @Column({ nullable: false })
+  userId!: string;
 
   @Column()
-  content: string;
+  content!: string;
 
   @Column({ default: false })
-  isCompleted: boolean;
-
-  constructor() {
-    this.id = '';
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
-    this.content = '';
-    this.isCompleted = false;
-    this.user = new User();
-  }
+  isCompleted!: boolean;
 }

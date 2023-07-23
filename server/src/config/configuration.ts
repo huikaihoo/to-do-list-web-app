@@ -15,6 +15,7 @@ const config = cleanEnv(process.env, {
   REDIS_HOST: host(),
   REDIS_PORT: port(),
   REDIS_PASSWORD: str(),
+  REDIS_CACHE_TTL: num({ default: 60_000 }),
   // User
   USERNAME_MIN_LENGTH: num({ default: 6 }),
   PASSWORD_MIN_LENGTH: num({ default: 6 }),

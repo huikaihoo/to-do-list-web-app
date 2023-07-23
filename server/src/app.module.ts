@@ -27,7 +27,7 @@ import { Task } from './tasks/entities/task.entity';
       cache: {
         alwaysEnabled: true,
         type: 'ioredis',
-        duration: 60_000,
+        duration: config.REDIS_CACHE_TTL,
         options: {
           host: config.REDIS_HOST,
           port: config.REDIS_PORT,

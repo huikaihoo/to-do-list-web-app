@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -9,7 +9,7 @@ export class User {
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   createdAt!: Date;
 
-  @CreateDateColumn({ type: 'timestamp', nullable: true })
+  @UpdateDateColumn({ type: 'timestamp', nullable: true })
   updatedAt!: Date;
 
   @Column({ unique: true })
@@ -19,6 +19,10 @@ export class User {
   @Column()
   @IsNotEmpty()
   password!: string;
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 
   removePassword() {
     // Remove password from the returned object

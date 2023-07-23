@@ -1,9 +1,10 @@
-export class CreateTaskDto {
-  public content: string;
-  public isCompleted: boolean;
+import { IsNotEmpty, IsOptional, IsBoolean } from 'class-validator';
 
-  constructor() {
-    this.content = '';
-    this.isCompleted = false;
-  }
+export class CreateTaskDto {
+  @IsNotEmpty()
+  public content!: string;
+
+  @IsBoolean()
+  @IsOptional()
+  public isCompleted?: boolean;
 }
