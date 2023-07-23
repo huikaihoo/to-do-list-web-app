@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { FindOneUserDto } from './dto/findone-user.dto';
 import { ValidationError, validate } from 'class-validator';
 import _ from 'lodash';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { JwtPayload } from 'jsonwebtoken';
 
 @Controller('v1/user')

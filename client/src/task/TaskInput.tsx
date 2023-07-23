@@ -11,9 +11,15 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask }) => {
 
   const SubmitButton = () => (
     <Tooltip title="Add new task">
-      <IconButton onClick={handleAddTask}>
-        <AddCircleIcon style={{ color: 'green' }} />
-      </IconButton>
+      <span>
+        <IconButton
+          onClick={handleAddTask}
+          disabled={!newTaskText.trim()}
+          style={{ color: newTaskText.trim() ? 'green' : 'gray' }}
+        >
+          <AddCircleIcon />
+        </IconButton>
+      </span>
     </Tooltip>
   );
 

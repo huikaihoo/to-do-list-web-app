@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
+import PrimaryButton from '../component/PrimaryButton';
 
 interface TaskEditDialogProps {
   isOpen: boolean;
@@ -40,8 +41,10 @@ const TaskEditDialog: React.FC<TaskEditDialogProps> = ({ isOpen, initialText, on
     }
   };
 
+  const isSaveDisabled = editedTaskText.length <= 0;
+
   return (
-    <Dialog open={isOpen} onClose={handleCancelEdit} maxWidth="sm" fullWidth>
+    <Dialog open={isOpen} onClick={e => e.stopPropagation()} maxWidth="sm" fullWidth>
       <DialogTitle>Edit Task</DialogTitle>
       <DialogContent>
         <TextField
@@ -57,9 +60,9 @@ const TaskEditDialog: React.FC<TaskEditDialogProps> = ({ isOpen, initialText, on
         <Button onClick={handleCancelEdit} color="primary">
           Cancel
         </Button>
-        <Button onClick={handleSaveTask} color="primary" variant="contained" style={{ backgroundColor: '#4caf50' }}>
+        <PrimaryButton onClick={handleSaveTask} disabled={isSaveDisabled}>
           Save
-        </Button>
+        </PrimaryButton>
       </DialogActions>
     </Dialog>
   );

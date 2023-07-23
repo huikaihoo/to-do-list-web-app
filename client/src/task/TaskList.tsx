@@ -87,14 +87,18 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, setTasks, onLoadMore, isLoad
               }}
             />
             <Tooltip title="Edit task">
-              <IconButton onClick={() => handleEditTask(task.id)} color="primary">
-                <EditIcon />
-              </IconButton>
+              <span>
+                <IconButton onClick={() => handleEditTask(task.id)} color="primary">
+                  <EditIcon />
+                </IconButton>
+              </span>
             </Tooltip>
             <Tooltip title="Delete task">
-              <IconButton onClick={() => handleDeleteTask(task.id)} style={{ color: 'red' }}>
-                <DeleteIcon />
-              </IconButton>
+              <span>
+                <IconButton onClick={() => handleDeleteTask(task.id)} style={{ color: 'red' }}>
+                  <DeleteIcon />
+                </IconButton>
+              </span>
             </Tooltip>
           </>
         </ListItem>

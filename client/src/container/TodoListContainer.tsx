@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Box, Paper } from '@mui/material';
-import TaskInput from './task/TaskInput';
-import TaskList from './task/TaskList';
-import { Task } from './interface/task';
+import TaskInput from '../task/TaskInput';
+import TaskList from '../task/TaskList';
+import { Task } from '../interface/task';
 
-const TodoList: React.FC = () => {
+const TodoListContainer: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]); // Use the Task interface in state
   const [isLoading, setIsLoading] = useState(false);
 
@@ -55,4 +55,4 @@ const TodoList: React.FC = () => {
   );
 };
 
-export default TodoList;
+export default TodoListContainer;

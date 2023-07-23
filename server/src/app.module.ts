@@ -8,6 +8,7 @@ import configuration, { config } from './config/configuration';
 import { ConfigModule } from '@nestjs/config';
 import { TasksModule } from './tasks/tasks.module';
 import { Task } from './tasks/entities/task.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { Task } from './tasks/entities/task.entity';
       },
     }),
     TypeOrmModule.forFeature([User, Task]),
+    AuthModule,
     UsersModule,
     TasksModule,
   ],
