@@ -12,5 +12,6 @@ ignores:
     'source-map-support',
     'ts-loader',
     'tsconfig-paths',
+    'pino-pretty',
   ]
 ignore-patterns: ['dist', 'docs', 'libs']

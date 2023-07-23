@@ -12,6 +12,7 @@ import { ConfigType } from '../config/configuration';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { handleError } from '../utils/error';
+import { PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class TasksService {
@@ -19,8 +20,11 @@ export class TasksService {
     @InjectRepository(Task)
     private taskRepository: Repository<Task>,
     private configService: ConfigService<ConfigType>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
-  ) {}
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly logger: PinoLogger
+  ) {
+    this.logger.setContext(TasksService.name);
+  }
 
   async create(userId: string, createTaskDto: CreateTaskDto) {
     if (_.isEmpty(userId)) {
@@ -34,6 +38,7 @@ export class TasksService {
       await this.taskRepository.save(task);
       return task;
     } catch (error: any) {
+      this.logger.error(error);
       return handleError(error);
     }
   }
@@ -79,6 +84,7 @@ export class TasksService {
 
       return { tasks, total, currEndId };
     } catch (error: any) {
+      this.logger.error(error);
       return handleError(error);
     }
   }
@@ -97,13 +103,14 @@ export class TasksService {
         },
       });
       if (task.userId !== userId) {
-        throw new ForbiddenException();
+        return new ForbiddenException();
       }
       return task;
     } catch (error: any) {
       if (error.name === 'EntityNotFoundError') {
         throw new NotFoundException();
       }
+      this.logger.error(error);
       return handleError(error);
     }
   }
@@ -116,7 +123,7 @@ export class TasksService {
     try {
       const taskToUpdate = await this.taskRepository.findOneByOrFail({ id });
       if (taskToUpdate.userId !== userId) {
-        throw new ForbiddenException();
+        return new ForbiddenException();
       }
       await this.deleteRedisCache(userId);
 
@@ -126,6 +133,7 @@ export class TasksService {
       if (error.name === 'EntityNotFoundError') {
         throw new NotFoundException();
       }
+      this.logger.error(error);
       return handleError(error);
     }
   }
@@ -138,16 +146,17 @@ export class TasksService {
     try {
       const taskToDelete = await this.taskRepository.findOneBy({ id });
       if (!taskToDelete) {
-        throw new NotFoundException();
+        return new NotFoundException();
       }
       if (taskToDelete.userId !== userId) {
-        throw new ForbiddenException();
+        return new ForbiddenException();
       }
       await this.deleteRedisCache(userId);
 
       const deleteResult = await this.taskRepository.softDelete({ id });
       return deleteResult.affected ?? 0; // Return the number of records deleted successfully
     } catch (error: any) {
+      this.logger.error(error);
       return handleError(error);
     }
   }
@@ -157,10 +166,11 @@ export class TasksService {
     return ttl ?? 60_000;
   }
 
+  // Get all keys that start with `tasks:${userId}:*`
   private async deleteRedisCache(userId: string) {
-    // Get all keys that start with `tasks:${userId}:*`
     const keys = await this.cacheManager.store.keys(`tasks:${userId}:*`);
-    console.log('deleteRedisCache', userId, keys.length);
+    this.logger.debug(`deleteRedisCache userId=${userId} size=${keys.length}`);
+
     await Promise.all(keys.map(key => this.cacheManager.del(key)));
   }
 }

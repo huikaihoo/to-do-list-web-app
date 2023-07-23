@@ -4,13 +4,17 @@ import { JwtService } from '@nestjs/jwt';
 import { FastifyRequest } from 'fastify';
 import _ from 'lodash';
 import { ConfigType } from '../config/configuration';
+import { PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private configService: ConfigService<ConfigType>
-  ) {}
+    private configService: ConfigService<ConfigType>,
+    private readonly logger: PinoLogger
+  ) {
+    this.logger.setContext(AuthGuard.name);
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -25,7 +29,8 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException();
       }
       request['payload'] = payload;
-    } catch {
+    } catch (error: any) {
+      this.logger.error(error);
       throw new UnauthorizedException();
     }
     return true;

@@ -2,12 +2,10 @@ version: '3.9'
 
 services:
   server:
-    image: to-do-list-sever
+    image: to-do-list-server
     build:
-      context: ./sever
-      dockerfile: ./Dockerfile
+      dockerfile: ./server/Dockerfile
     tty: true
-    command: node dist/apps/public/main.js
     environment:
       - TZ=Asia/Hong_Kong
     env_file:
@@ -20,10 +18,8 @@ services:
   client:
     image: to-do-list-client
     build:
-      context: ./client
-      dockerfile: ./Dockerfile
+      dockerfile: ./client/Dockerfile
     tty: true
-    command: node dist/apps/user/main.js
     environment:
       - TZ=Asia/Hong_Kong
     ports:

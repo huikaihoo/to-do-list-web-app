@@ -5,14 +5,15 @@ import dotenv from 'dotenv';
 dotenv.config({ path: path.join(process.cwd(), `../.env.${process.env.NODE_ENV}`) });
 
 const config = cleanEnv(process.env, {
+  LOG_LEVEL: str({ default: 'debug' }),
   // Postgres Database
-  POSTGRES_HOST: host({ default: 'localhost' }),
+  POSTGRES_HOST: host({ default: 'postgres' }),
   POSTGRES_PORT: num(),
   POSTGRES_DB: str(),
   POSTGRES_USER: str(),
   POSTGRES_PASSWORD: str(),
   // Redis Cache
-  REDIS_HOST: host(),
+  REDIS_HOST: host({ default: 'redis' }),
   REDIS_PORT: port(),
   REDIS_PASSWORD: str(),
   REDIS_CACHE_TTL: num({ default: 60_000 }),

@@ -7,14 +7,18 @@ import { FindOneUserDto } from './dto/findone-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { ConfigType } from '../config/configuration';
 import { handleError } from '../utils/error';
+import { PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private configService: ConfigService<ConfigType>
-  ) {}
+    private configService: ConfigService<ConfigType>,
+    private readonly logger: PinoLogger
+  ) {
+    this.logger.setContext(UsersService.name);
+  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
@@ -22,6 +26,7 @@ export class UsersService {
       await this.userRepository.save(user);
       return user;
     } catch (error: any) {
+      this.logger.error(error);
       return handleError(error);
     }
   }
@@ -33,6 +38,7 @@ export class UsersService {
         cache: this.getRedisCacheTtl(),
       });
     } catch (error: any) {
+      this.logger.error(error);
       return handleError(error);
     }
   }

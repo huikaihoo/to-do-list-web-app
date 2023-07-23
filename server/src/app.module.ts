@@ -11,12 +11,28 @@ import { Task } from './tasks/entities/task.entity';
 import { AuthModule } from './auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
+    }),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        level: config.LOG_LEVEL,
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            translateTime: 'SYS:yyyy-mm-dd HH:MM:ss.l',
+            ignore: 'pid,hostname',
+            suppressFlushSyncWarning: true,
+            colorize: true,
+            singleLine: true,
+          },
+        },
+      },
     }),
     CacheModule.registerAsync({
       isGlobal: true,

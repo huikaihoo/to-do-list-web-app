@@ -3904,6 +3904,7 @@ __metadata:
     "@testing-library/user-event": ^13.5.0
     "@types/jest": 29.5.1
     "@types/js-cookie": ^3.0.3
+    "@types/lodash": ^4.14.195
     "@types/react": ^18.2.15
     "@types/react-dom": ^18.2.7
     axios: ^1.4.0
@@ -3960,7 +3961,10 @@ __metadata:
     jest: 29.5.0
     jsonwebtoken: ^9.0.1
     lodash: ^4.17.21
+    nestjs-pino: ^3.3.0
     pg: ^8.11.1
+    pino-http: ^8.3.3
+    pino-pretty: ^10.1.0
     prettier: ^3.0.0
     redis: ^3.1.2
     reflect-metadata: ^0.1.13
@@ -6465,7 +6469,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colorette@npm:^2.0.10":
+"colorette@npm:^2.0.10, colorette@npm:^2.0.7":
   version: 2.0.20
   resolution: "colorette@npm:2.0.20"
   checksum: 0c016fea2b91b733eb9f4bcdb580018f52c0bc0979443dad930e5037a968237ac53d9beb98e218d2e9235834f8eebce7f8e080422d6194e957454255bde71d3d
@@ -7062,6 +7066,13 @@ __metadata:
   dependencies:
     "@babel/runtime": ^7.21.0
   checksum: f7be01523282e9bb06c0cd2693d34f245247a29098527d4420628966a2d9aad154bd0e90a6b1cf66d37adcb769cd108cf8a7bd49d76db0fb119af5cdd13644f4
+  languageName: node
+  linkType: hard
+
+"dateformat@npm:^4.6.3":
+  version: 4.6.3
+  resolution: "dateformat@npm:4.6.3"
+  checksum: c3aa0617c0a5b30595122bc8d1bee6276a9221e4d392087b41cbbdf175d9662ae0e50d0d6dcdf45caeac5153c4b5b0844265f8cd2b2245451e3da19e39e3b65d
   languageName: node
   linkType: hard
 
@@ -8473,6 +8484,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-copy@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "fast-copy@npm:3.0.1"
+  checksum: 5496b5cf47df29eea479deef03b6b7188626a2cbc356b3015649062846729de6f1a9f555f937e772da8feae0a1231fab13096ed32424b2d61e4d065abc9969fe
+  languageName: node
+  linkType: hard
+
 "fast-decode-uri-component@npm:^1.0.1":
   version: 1.0.1
   resolution: "fast-decode-uri-component@npm:1.0.1"
@@ -9215,7 +9233,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^8.0.1":
+"glob@npm:^8.0.0, glob@npm:^8.0.1":
   version: 8.1.0
   resolution: "glob@npm:8.1.0"
   dependencies:
@@ -9427,6 +9445,16 @@ __metadata:
   bin:
     he: bin/he
   checksum: 3d4d6babccccd79c5c5a3f929a68af33360d6445587d628087f39a965079d84f18ce9c3d3f917ee1e3978916fc833bb8b29377c3b403f919426f91bc6965e7a7
+  languageName: node
+  linkType: hard
+
+"help-me@npm:^4.0.1":
+  version: 4.2.0
+  resolution: "help-me@npm:4.2.0"
+  dependencies:
+    glob: ^8.0.0
+    readable-stream: ^3.6.0
+  checksum: 6548acba10dd79ebfc93f0d739c4cb2f32f7932c8d87b091992f3a0f844706263415eab81be015aed4ab874154232beb666920d7e280502c6bba29a40cde343e
   languageName: node
   linkType: hard
 
@@ -11403,6 +11431,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"joycon@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "joycon@npm:3.1.1"
+  checksum: 8003c9c3fc79c5c7602b1c7e9f7a2df2e9916f046b0dbad862aa589be78c15734d11beb9fe846f5e06138df22cb2ad29961b6a986ba81c4920ce2b15a7f11067
+  languageName: node
+  linkType: hard
+
 "js-cookie@npm:^3.0.5":
   version: 3.0.5
   resolution: "js-cookie@npm:3.0.5"
@@ -12418,6 +12453,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nestjs-pino@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "nestjs-pino@npm:3.3.0"
+  peerDependencies:
+    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
+    pino-http: ^6.4.0 || ^7.0.0 || ^8.0.0
+  checksum: ce25bcfe748e2adbff2f32be18b62568100710f3e69043032305483ebaa6f060cf960a5daf1373f34a6944ca63072f607e0e6983e61ebc74ee734c4e9c62c6bd
+  languageName: node
+  linkType: hard
+
 "no-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "no-case@npm:3.0.4"
@@ -13207,13 +13252,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-abstract-transport@npm:v1.0.0":
+"pino-abstract-transport@npm:^1.0.0, pino-abstract-transport@npm:v1.0.0":
   version: 1.0.0
   resolution: "pino-abstract-transport@npm:1.0.0"
   dependencies:
     readable-stream: ^4.0.0
     split2: ^4.0.0
   checksum: 05dd0eda52dd99fd204b39fe7b62656744b63e863bc052cdd5105d25f226a236966d0a46e39a1ace4838f6e988c608837ff946d2d0bc92835ca7baa0a3bff8d8
+  languageName: node
+  linkType: hard
+
+"pino-http@npm:^8.3.3":
+  version: 8.3.3
+  resolution: "pino-http@npm:8.3.3"
+  dependencies:
+    get-caller-file: ^2.0.5
+    pino: ^8.0.0
+    pino-std-serializers: ^6.0.0
+    process-warning: ^2.0.0
+  checksum: 6d9fb4f9230dce04d934b3d6179b2b9a14654e8e0e6cb7344cd1d8baeb53d5c42e1d169dffe350379bfeb9e41b59dc0ec417fe86eb01d49a21e2bac031c2803e
+  languageName: node
+  linkType: hard
+
+"pino-pretty@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "pino-pretty@npm:10.1.0"
+  dependencies:
+    colorette: ^2.0.7
+    dateformat: ^4.6.3
+    fast-copy: ^3.0.0
+    fast-safe-stringify: ^2.1.1
+    help-me: ^4.0.1
+    joycon: ^3.1.1
+    minimist: ^1.2.6
+    on-exit-leak-free: ^2.1.0
+    pino-abstract-transport: ^1.0.0
+    pump: ^3.0.0
+    readable-stream: ^4.0.0
+    secure-json-parse: ^2.4.0
+    sonic-boom: ^3.0.0
+    strip-json-comments: ^3.1.1
+  bin:
+    pino-pretty: bin.js
+  checksum: 543a658b0b1d00a0dce5d1015a4fa581ea2b8b4937d3cbef6d03cc9c0bbc2425493d302adbab3a03aa20d0a9c102222b378336a2241e6c493a086c21ad3288d3
   languageName: node
   linkType: hard
 
@@ -13224,7 +13305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:^8.12.0":
+"pino@npm:^8.0.0, pino@npm:^8.12.0":
   version: 8.14.1
   resolution: "pino@npm:8.14.1"
   dependencies:
@@ -15331,7 +15412,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"secure-json-parse@npm:^2.5.0":
+"secure-json-parse@npm:^2.4.0, secure-json-parse@npm:^2.5.0":
   version: 2.7.0
   resolution: "secure-json-parse@npm:2.7.0"
   checksum: d9d7d5a01fc6db6115744ba23cf9e67ecfe8c524d771537c062ee05ad5c11b64c730bc58c7f33f60bd6877f96b86f0ceb9ea29644e4040cb757f6912d4dd6737
@@ -15619,7 +15700,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sonic-boom@npm:^3.1.0":
+"sonic-boom@npm:^3.0.0, sonic-boom@npm:^3.1.0":
   version: 3.3.0
   resolution: "sonic-boom@npm:3.3.0"
   dependencies:

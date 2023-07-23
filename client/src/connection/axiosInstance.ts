@@ -1,11 +1,12 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import appConfig from '../config';
 
 // Set the base URL for your API server
-const baseURL = 'http://localhost:3001'; // Replace with your actual API base URL
+console.log('serverBaseUrl', appConfig.serverBaseUrl);
 
 const axiosInstance = axios.create({
-  baseURL: baseURL,
+  baseURL: appConfig.serverBaseUrl,
   timeout: 30_000, // milliseconds
 });
 
