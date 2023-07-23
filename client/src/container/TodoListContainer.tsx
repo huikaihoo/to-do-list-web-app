@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { Box, Paper } from '@mui/material';
 import TaskInput from '../task/TaskInput';
 import TaskList from '../task/TaskList';
@@ -14,12 +13,25 @@ const TodoListContainer: React.FC<TodoListContainerProps> = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [prevEndId, setPrevEndId] = useState<string | null>(null); // Add prevEndId state
 
-  const addTask = (taskContent: string) => {
-    const newTask: Task = {
-      id: uuidv4(),
-      content: taskContent,
-    };
-    setTasks(prevTasks => [newTask, ...prevTasks]);
+  const addTask = async (taskContent: string) => {
+    try {
+      setIsLoading(true);
+
+      const newTask = {
+        content: taskContent,
+        isCompleted: false,
+      };
+
+      // Send a POST request to create the new task
+      const response = await axiosInstance.post('v1/task', newTask);
+
+      // Add the new task to the tasks array
+      setTasks(prevTasks => [response.data, ...prevTasks]);
+    } catch (error) {
+      alert(`Error adding task: ${error}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const loadMoreTasks = useCallback(

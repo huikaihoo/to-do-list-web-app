@@ -5,6 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Checkbox from '@mui/material/Checkbox';
 import TaskEditDialog from './TaskEditDialog';
 import { Task } from '../interface/task';
+import axiosInstance from '../connection/axiosInstance';
 
 interface TaskListProps {
   tasks: Task[];
@@ -14,7 +15,6 @@ interface TaskListProps {
 }
 
 const TaskList: React.FC<TaskListProps> = ({ tasks, setTasks, onLoadMore, isLoading }) => {
-  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -39,31 +39,61 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, setTasks, onLoadMore, isLoad
     };
   }, [onLoadMore]);
 
-  const handleCheckboxChange = (taskId: string) => {
-    if (completedTasks.includes(taskId)) {
-      setCompletedTasks(prev => prev.filter(item => item !== taskId));
-    } else {
-      setCompletedTasks(prev => [...prev, taskId]);
-    }
-  };
-
   const handleEditTask = (taskId: string) => {
     setEditingTaskId(taskId);
   };
 
-  const handleSaveTask = (editedText: string) => {
-    const newTasks = tasks.map(task => (task.id === editingTaskId ? { ...task, content: editedText } : task));
-    setTasks(newTasks);
+  const handleTaskUpdate = async (
+    taskId: string,
+    updatedContent: string | null = null,
+    isCompleted: boolean | null = null
+  ) => {
+    try {
+      if (updatedContent === null && isCompleted === null) return;
 
+      const taskToUpdate = tasks.find(task => task.id === taskId);
+      if (!taskToUpdate) return;
+
+      const updatedTaskData = {
+        content: updatedContent !== null ? updatedContent : taskToUpdate.content,
+        isCompleted: isCompleted !== null ? isCompleted : taskToUpdate.isCompleted,
+      };
+
+      const updatedTask = await axiosInstance.post(`v1/task/${taskId}`, updatedTaskData);
+
+      const newTasks = tasks.map(task => (task.id === taskId ? updatedTask.data : task));
+      setTasks(newTasks);
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
+
+  const handleSaveTask = (editedText: string) => {
+    if (editingTaskId) {
+      handleTaskUpdate(editingTaskId, editedText);
+    }
     setEditingTaskId(null);
+  };
+
+  const handleCheckboxChange = (taskId: string) => {
+    const taskToUpdate = tasks.find(task => task.id === taskId);
+    if (!taskToUpdate) return;
+
+    handleTaskUpdate(taskId, null, !taskToUpdate.isCompleted);
   };
 
   const handleCancelEdit = () => {
     setEditingTaskId(null);
   };
 
-  const handleDeleteTask = (taskId: string) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId));
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await axiosInstance.delete(`v1/task/${taskId}`);
+
+      setTasks(prev => prev.filter(task => task.id !== taskId));
+    } catch (error) {
+      alert(`Error deleting task ${editingTaskId} - ${error}`);
+    }
   };
 
   return (
@@ -73,7 +103,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, setTasks, onLoadMore, isLoad
           <ListItemIcon>
             <Checkbox
               edge="start"
-              checked={completedTasks.includes(task.id)}
+              checked={task.isCompleted}
               tabIndex={-1}
               disableRipple
               onChange={() => handleCheckboxChange(task.id)}
@@ -83,8 +113,8 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, setTasks, onLoadMore, isLoad
             <ListItemText
               primary={task.content}
               style={{
-                textDecoration: completedTasks.includes(task.id) ? 'line-through' : 'none',
-                color: completedTasks.includes(task.id) ? 'gray' : 'black',
+                textDecoration: task.isCompleted ? 'line-through' : 'none',
+                color: task.isCompleted ? 'gray' : 'black',
               }}
             />
             <Tooltip title="Edit task">
