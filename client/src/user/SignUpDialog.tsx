@@ -58,7 +58,17 @@ const SignUpDialog: React.FC<SignUpDialogProps> = ({ open, onClose }) => {
 
   useEffect(() => {
     validateForm();
-  }, [validateForm]);
+    if (!open) {
+      setUsername('');
+      setPassword('');
+      setConfirmPassword('');
+      setUsernameError(false);
+      setPasswordError(false);
+      setConfirmPasswordError(false);
+      setErrorMessage('');
+      setIsFormValid(false);
+    }
+  }, [validateForm, open]);
 
   const handleSignUp = async () => {
     try {

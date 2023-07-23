@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CircularProgress, List, ListItem, ListItemIcon, ListItemText, IconButton, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -9,32 +9,35 @@ import { Task } from '../interface/task';
 interface TaskListProps {
   tasks: Task[];
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  onLoadMore: () => void;
+  onLoadMore: (byScroll: boolean) => void;
   isLoading: boolean;
 }
 
 const TaskList: React.FC<TaskListProps> = ({ tasks, setTasks, onLoadMore, isLoading }) => {
-  const [isFetching, setIsFetching] = useState(false);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    function handleScroll() {
-      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 200) {
-        setIsFetching(true);
+    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
+      const target = entries[0];
+      if (target.isIntersecting) {
+        onLoadMore(true);
       }
+    };
+
+    const observer = new IntersectionObserver(handleIntersection, { root: null, rootMargin: '200px' });
+    if (sentinelRef.current) {
+      observer.observe(sentinelRef.current);
     }
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    if (!isFetching || isLoading) return;
-
-    onLoadMore();
-    setIsFetching(false);
-  }, [isFetching, isLoading, onLoadMore]);
+    return () => {
+      if (sentinelRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        observer.unobserve(sentinelRef.current);
+      }
+    };
+  }, [onLoadMore]);
 
   const handleCheckboxChange = (taskId: string) => {
     if (completedTasks.includes(taskId)) {
@@ -60,14 +63,12 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, setTasks, onLoadMore, isLoad
   };
 
   const handleDeleteTask = (taskId: string) => {
-    // setCompletedTasks(prev => prev.filter(item => item !== taskId));
-    // remove the task from the tasks array
     setTasks(prev => prev.filter(task => task.id !== taskId));
   };
 
   return (
     <List>
-      {tasks.map(task => (
+      {tasks.map((task, index) => (
         <ListItem key={task.id} disablePadding>
           <ListItemIcon>
             <Checkbox
@@ -101,6 +102,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, setTasks, onLoadMore, isLoad
               </span>
             </Tooltip>
           </>
+          {index === tasks.length - 1 && <div ref={sentinelRef} />}
         </ListItem>
       ))}
       {isLoading && <CircularProgress />}

@@ -1,11 +1,10 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 import { FindAllTaskDto } from './dto/findall-task.dto';
 import _ from 'lodash';
 
@@ -58,15 +57,18 @@ export class TasksService {
 
     const [tasks, total] = await query.getManyAndCount();
 
-    let currEndId: number | undefined = undefined;
+    let currEndId: string;
     if (tasks.length > 0) {
       currEndId = tasks[tasks.length - 1].id;
+    } else {
+      currEndId = 'END';
     }
 
+    console.log('111', { tasks, total, currEndId });
     return { tasks, total, currEndId };
   }
 
-  async findOne(userId: string, id: number) {
+  async findOne(userId: string, id: string) {
     try {
       const task = await this.taskRepository.findOneByOrFail({ id });
       if (task.userId !== userId) {
@@ -82,7 +84,7 @@ export class TasksService {
     }
   }
 
-  async update(userId: string, id: number, updateTaskDto: UpdateTaskDto) {
+  async update(userId: string, id: string, updateTaskDto: UpdateTaskDto) {
     try {
       const taskToUpdate = await this.taskRepository.findOneByOrFail({ id });
       if (taskToUpdate.userId !== userId) {
@@ -99,7 +101,7 @@ export class TasksService {
     }
   }
 
-  async remove(userId: string, id: number) {
+  async remove(userId: string, id: string) {
     try {
       const taskToDelete = await this.taskRepository.findOneBy({ id });
       if (!taskToDelete) {

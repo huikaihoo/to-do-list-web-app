@@ -4,41 +4,65 @@ import { Box, Paper } from '@mui/material';
 import TaskInput from '../task/TaskInput';
 import TaskList from '../task/TaskList';
 import { Task } from '../interface/task';
+import axiosInstance from '../connection/axiosInstance';
+import _ from 'lodash';
 
-const TodoListContainer: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]); // Use the Task interface in state
+interface TodoListContainerProps {}
+
+const TodoListContainer: React.FC<TodoListContainerProps> = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [prevEndId, setPrevEndId] = useState<string | null>(null); // Add prevEndId state
 
   const addTask = (taskContent: string) => {
     const newTask: Task = {
-      id: uuidv4(), // Generate a random UUID for the new task
+      id: uuidv4(),
       content: taskContent,
     };
     setTasks(prevTasks => [newTask, ...prevTasks]);
   };
 
-  const loadMoreTasks = useCallback(() => {
-    // Simulate a loading delay to demonstrate lazy loading behavior
-    if (tasks.length < 100) {
-      setIsLoading(true);
-      setTimeout(() => {
-        const newTasks = Array.from({ length: 10 }, (_, index) => {
-          const id = uuidv4();
-          return {
-            id, // Generate a random UUID for the new task
-            content: `Dummy Task ${id}`,
-          };
-        });
-        setTasks(prevTasks => [...prevTasks, ...newTasks]);
+  const loadMoreTasks = useCallback(
+    async (byScroll: boolean) => {
+      try {
+        console.log('prevEndId:', prevEndId, byScroll);
+
+        if (_.isEmpty(prevEndId) || (byScroll && prevEndId !== 'END')) {
+          setIsLoading(true);
+
+          // Fetch more tasks using the prevEndId parameter
+          const response = await axiosInstance.get('v1/task', {
+            params: {
+              take: 10,
+              prevEndId, // Set the prevEndId parameter for fetching next tasks
+            },
+          });
+
+          const { tasks: newTasks, currEndId } = response.data; // Assuming the API response contains the new tasks and currEndId
+
+          if (newTasks.length > 0) {
+            if (!_.isEmpty(prevEndId)) {
+              setTasks(prevTasks => [...prevTasks, ...newTasks]);
+            } else {
+              setTasks(newTasks);
+            }
+          }
+          setPrevEndId(currEndId);
+        }
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      } finally {
         setIsLoading(false);
-      }, 1000);
-    }
-  }, [tasks]); // Include 'tasks' in the dependency array
+      }
+    },
+    [prevEndId]
+  );
 
   useEffect(() => {
     // Initial loading of tasks
-    loadMoreTasks();
-  }, [loadMoreTasks]); // Use the 'loadMoreTasks' callback in the dependency array
+    loadMoreTasks(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div>

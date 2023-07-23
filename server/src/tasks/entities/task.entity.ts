@@ -1,4 +1,4 @@
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -13,7 +13,7 @@ import {
 @Entity()
 export class Task {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
-  id!: number;
+  id!: string;
 
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   createdAt!: Date;

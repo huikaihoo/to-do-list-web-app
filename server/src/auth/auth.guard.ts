@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { FastifyRequest } from 'fastify';
 import _ from 'lodash';
-import { ConfigType } from 'src/config/configuration';
+import { ConfigType } from '../config/configuration';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
