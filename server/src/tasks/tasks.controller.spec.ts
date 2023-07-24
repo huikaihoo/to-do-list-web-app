@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
-import { ConfigTestingModule, JwtTestingModule, LoggerTestingModule } from '../../test/modules';
+import { ConfigTestingModule, JwtTestingModule, LoggerTestingModule } from '../../test/utils/modules';
 import { BadRequestException } from '@nestjs/common';
 import { DeepMocked, createMock } from '@golevelup/ts-jest';
-import { mockTask, mockTaskId, mockUserId } from '../../test/entities';
+import { mockTask, mockTaskId, mockUserId } from '../../test/utils/entities';
 
 describe('TasksController', () => {
   let controller: TasksController;
@@ -12,14 +12,7 @@ describe('TasksController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigTestingModule(),
-        LoggerTestingModule(),
-        JwtTestingModule(),
-        // TypeOrmTestingModule([User, Task]),
-        // CacheTestingModule(),
-        // TypeOrmModule.forFeature([Task]),
-      ],
+      imports: [ConfigTestingModule(), LoggerTestingModule(), JwtTestingModule()],
       controllers: [TasksController],
       providers: [
         {

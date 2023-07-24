@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
-import { ConfigTestingModule, JwtTestingModule, LoggerTestingModule } from '../../test/modules';
+import { ConfigTestingModule, JwtTestingModule, LoggerTestingModule } from '../../test/utils/modules';
 import bcrypt from 'bcrypt';
-import { mockHashedPassword, mockJwtSecret, mockUser } from '../../test/entities';
+import { mockHashedPassword, mockJwtSecret, mockUser } from '../../test/utils/entities';
 import { JwtService } from '@nestjs/jwt';
 import _ from 'lodash';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';

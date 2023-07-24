@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
-import { ConfigTestingModule, LoggerTestingModule } from '../../test/modules';
+import { ConfigTestingModule, LoggerTestingModule } from '../../test/utils/modules';
 import { AuthService } from './auth.service';
 import { UnauthorizedException } from '@nestjs/common';
 import { DeepMocked, createMock } from '@golevelup/ts-jest';

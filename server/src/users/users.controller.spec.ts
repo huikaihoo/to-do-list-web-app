@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { ConfigTestingModule, JwtTestingModule, LoggerTestingModule } from '../../test/modules';
+import { ConfigTestingModule, JwtTestingModule, LoggerTestingModule } from '../../test/utils/modules';
 import { BadRequestException } from '@nestjs/common';
-import { mockUser, mockUserId } from '../../test/entities';
+import { mockUser, mockUserId } from '../../test/utils/entities';
 import { DeepMocked, createMock } from '@golevelup/ts-jest';
 
 describe('UsersController', () => {

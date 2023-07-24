@@ -1,5 +1,5 @@
-import { Task } from '../src/tasks/entities/task.entity';
-import { User } from '../src/users/entities/user.entity';
+import { Task } from '../../src/tasks/entities/task.entity';
+import { User } from '../../src/users/entities/user.entity';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 
 const mockUserId = 'b8c3d0cb-1968-4d85-8353-22deb5998a2a';

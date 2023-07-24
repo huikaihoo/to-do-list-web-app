@@ -53,6 +53,7 @@ import { LoggerModule } from 'nestjs-pino';
       database: config.POSTGRES_DB,
       entities: [User, Task],
       synchronize: true,
+      dropSchema: process.env.NODE_ENV === 'test',
       cache: {
         alwaysEnabled: false,
         type: 'redis',

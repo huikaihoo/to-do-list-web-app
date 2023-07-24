@@ -5,8 +5,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
 import { FastifyRequest } from 'fastify';
 import { ConfigType } from '../config/configuration';
-import { ConfigTestingModule, LoggerTestingModule } from '../../test/modules';
-import { mockJwtSecret } from '../../test/entities';
+import { ConfigTestingModule, LoggerTestingModule } from '../../test/utils/modules';
+import { mockJwtSecret } from '../../test/utils/entities';
 import { createMock } from '@golevelup/ts-jest';
 
 describe('AuthGuard', () => {
