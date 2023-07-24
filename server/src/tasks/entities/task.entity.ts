@@ -36,4 +36,8 @@ export class Task {
 
   @Column({ default: false })
   isCompleted!: boolean;
+
+  constructor(partial: Partial<Task>) {
+    Object.assign(this, partial);
+  }
 }
