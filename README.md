@@ -1,4 +1,4 @@
-# To-Do List App Documentation
+# To-Do List Web App
 
 ---
 
@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Welcome to the documentation for the To-Do List application! This repository contains the source code for the application, which consists of both the Frontend and Backend components. The application can be containerized for easy deployment. Let's take a closer look at each component:
+Welcome to the documentation for the To-Do List web application! This repository contains the source code for the application, which consists of both the Frontend and Backend components. The application can be containerized for easy deployment. Let's take a closer look at each component:
 
 ## Frontend
 
