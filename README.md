@@ -33,8 +33,13 @@ The backend is composed of the following resources:
 
 ### Database and Cache
 
-- **PostgreSQL**: The backend uses PostgreSQL via TypeORM to store and manage data related to users and tasks.
-- **Redis Cache**: Tasks are cached in Redis to optimize performance. Cached data is retrieved from Redis instead of hitting the database for frequently accessed data, improving response times.
+Data is stored in PostgreSQL via TypeORM, providing a reliable and efficient storage solution for user and task-related data.
+
+For enhanced performance, the backend utilizes Redis as a caching mechanism. When querying for tasks, the tasks are cached in Redis, and subsequent requests for the same data will be served directly from the cache until the cache timeout is reached.
+
+The cache is based on user-specific data, ensuring that each user's task data is stored separately. When a user's tasks are updated or deleted, the corresponding task cache for that user will be invalidated, ensuring that users always receive up-to-date task information.
+
+This caching strategy helps to reduce the load on the PostgreSQL database and significantly improves the overall response time of the application.
 
 ### Testing
 
