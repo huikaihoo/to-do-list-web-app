@@ -6,7 +6,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
 import request from 'supertest';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { CreateUserDto } from '../../src/users/dto/create-user.dto';
 
 // Common setup function
 const setupTestApp = async (): Promise<INestApplication> => {

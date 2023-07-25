@@ -26,7 +26,7 @@ async function bootstrap() {
   app.enableCors();
 
   // Swagger
-  const config = new DocumentBuilder().build();
+  const config = new DocumentBuilder().setTitle('To-Do List Server API').addBearerAuth().build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 

@@ -45,6 +45,6 @@ export class UsersService {
 
   private getRedisCacheTtl(): number {
     const ttl = this.configService.get('REDIS_CACHE_TTL', { infer: true });
-    return ttl ?? 60_000;
+    return Number(ttl ?? 60_000);
   }
 }

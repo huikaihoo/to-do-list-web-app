@@ -163,7 +163,7 @@ export class TasksService {
 
   private getRedisCacheTtl(): number {
     const ttl = this.configService.get('REDIS_CACHE_TTL', { infer: true });
-    return ttl ?? 60_000;
+    return Number(ttl ?? 60_000);
   }
 
   // Get all keys that start with `tasks:${userId}:*`

@@ -5,6 +5,7 @@ ignores:
     '@types/jest',
     '@nestjs/mapped-types',
     'pg',
+    'pino-pretty',
     'redis',
     '@nestjs/schematics',
     '@types/body-parser',
@@ -12,6 +13,5 @@ ignores:
     'source-map-support',
     'ts-loader',
     'tsconfig-paths',
-    'pino-pretty',
   ]
 ignore-patterns: ['dist', 'docs', 'libs']
